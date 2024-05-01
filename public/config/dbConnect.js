@@ -30,7 +30,7 @@ const sequelize = new sequelize_1.default.Sequelize(`${dbUrl}`, {
 const modelsDir = path_1.default.join(__dirname, '../db/models');
 fs_1.default.readdirSync(modelsDir)
     .filter((file) => {
-    return (file.indexOf(".") !== 0 && file.slice(-3) === ".ts");
+    return (file.indexOf(".") !== 0 && file.slice(-3) === ".js");
 })
     .forEach((file) => {
     const model = require(path_1.default.join(modelsDir, file))(sequelize, sequelize_1.default.DataTypes);
