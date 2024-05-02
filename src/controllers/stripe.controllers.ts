@@ -93,23 +93,35 @@ export const createCustomer = async (email: string) => {
 
 export const associateCardWithPayment = async (req: Request, res: Response) => {
   try {
-    const { customerId, cardToken } = req.body;
+    const { customerId, cardNumber, expMonth, expYear, cvc } = req.body;
     console.log("Received request to associate card with payment");
     console.log("customerId:", customerId);
-    console.log("cardToken:", cardToken);
-    if (!customerId || !cardToken) {
-      throw new Error("Customer ID and card token are required in the request body");
-    }
+    console.log("cardNumber:", cardNumber);
+    console.log("expMonth:", expMonth);
+    console.log("expYear:", expYear);
+    console.log("cvc:", cvc);
+    
+    // Crear un token de tarjeta en Stripe
+    const token = await stripe.tokens.create({
+      card: {
+        number: cardNumber,
+        exp_month: expMonth,
+        exp_year: expYear,
+        cvc: cvc,
+      },
+    });
+
+    console.log("Created card token with ID:", token.id);
 
     // Asociar la tarjeta con el cliente en Stripe
     const card = await stripe.customers.createSource(customerId, {
-      source: cardToken,
+      source: token.id,
     });
     console.log("Created card with ID:", card.id);
 
     // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 100, // Monto en centavos (en este caso, 1 dólar)
+      amount: 100, 
       currency: "usd",
       customer: customerId,
       payment_method: card.id,
@@ -125,6 +137,7 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 
