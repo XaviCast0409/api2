@@ -39,9 +39,9 @@ companyRouter.patch("/change-status", changeStatusCompany);
 
 companyRouter.get("/company-all-blogs", getAllBlogs);
 companyRouter.post("/company-blog-create", createBlog);
-companyRouter.post("/company-blog-byId", getBlogById);
+companyRouter.post("/company-blog-byId/:id", getBlogById);
 companyRouter.post("/company-blog-update", updateBlog);
-companyRouter.delete("/company-blog-delete", deleteBlog);
+companyRouter.delete("/company-blog-delete/:id", deleteBlog);
 
 
 /* company profile */
