@@ -41,7 +41,7 @@ companyRouter.get("/company-all-blogs", getAllBlogs);
 companyRouter.post("/company-blog-create", createBlog);
 companyRouter.post("/company-blog-byId", getBlogById);
 companyRouter.post("/company-blog-update", updateBlog);
-companyRouter.post("/company-blog-delete", deleteBlog);
+companyRouter.delete("/company-blog-delete", deleteBlog);
 
 
 /* company profile */
