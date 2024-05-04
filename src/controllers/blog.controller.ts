@@ -91,13 +91,11 @@ export const updateBlog = async (req: Request, res: Response) => {
 };
 
 // Delete a blog by ID
-// Delete a blog by ID
-// Delete a blog by ID
+
 export const deleteBlog = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // `id` se obtiene de los parámetros de la solicitud
-    const blogId = parseInt(id, 10); // Convertir el ID a un número si es necesario
-
+    const { id } = req.params; 
+    const blogId = parseInt(id, 10); // 
     const blog = await db.Blog.destroy({ where: { id: blogId } });
     if (!blog) {
       return res.status(404).json({ message: `Blog with ID '${id}' not found` });
