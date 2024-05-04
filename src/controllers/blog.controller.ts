@@ -27,7 +27,7 @@ export const getAllBlogs = async (
 // Get a single blog by ID
 export const getBlogById = async (req: Request, res: Response) => {
   try {
-    const blog = await db.Blog.findByPk(req.params.id);
+    const blog = await db.Blog.findOne({where: { id: req.params.id }});
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
@@ -94,9 +94,8 @@ export const updateBlog = async (req: Request, res: Response) => {
 
 export const deleteBlog = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; 
-    const blogId = parseInt(id, 10); // 
-    const blog = await db.Blog.destroy({ where: { id: blogId } });
+    const { id } = req.params;
+    const blog = await db.Blog.destroy({ where: { id: id } });
     if (!blog) {
       return res.status(404).json({ message: `Blog with ID '${id}' not found` });
     }
