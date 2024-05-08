@@ -12,7 +12,8 @@ interface CompanyAttributes {
   isAdmin: boolean;
   createAt?: Date;
   updatedAt?: Date;
-  ZipCodeId?: number;
+  ZipCodeId?: number; 
+  stateCity: string
 }
 
 export interface CompanyInput extends Optional<CompanyAttributes, "id"> { }
@@ -27,6 +28,7 @@ class Company extends Model<CompanyAttributes, CompanyInput> implements CompanyA
   public password!: string;
 
   public customerstripeId!: string | undefined;
+  public stateCity!: string;
 
   public status!: boolean;
   public isAdmin!: boolean;
@@ -91,6 +93,10 @@ module.exports = (sequelize: Sequelize) => {
       },
       ZipCodeId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      stateCity: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },
