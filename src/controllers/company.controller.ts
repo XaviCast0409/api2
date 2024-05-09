@@ -63,7 +63,7 @@ export const createCompany = async (
     email,
     password,
     ZipCodeId,
-    customerstripeId
+    stateCity
   }: CompanyInput = req.body;
 
   try {
@@ -81,6 +81,7 @@ export const createCompany = async (
     }
 
     const hashedPassword = await encrypt(password);
+    const customerId = await createCustomer(email);
 
     const createdCompany = await db.Company.create({
       name_company,
@@ -89,11 +90,9 @@ export const createCompany = async (
       email,
       password: hashedPassword,
       ZipCodeId,
-      customerstripeId,
+      customerstripeId: customerId.id,
+      stateCity 
     });
-
-
-    await createCustomer(email);
 
     console.log("Company created successfully:", createdCompany.get({ plain: true }));
     return res.status(201).json({
