@@ -12,7 +12,6 @@ interface CompanyAttributes {
   isAdmin: boolean;
   createAt?: Date;
   updatedAt?: Date;
-  ZipCodeId?: number; 
   stateCity: string
 }
 
@@ -34,7 +33,6 @@ class Company extends Model<CompanyAttributes, CompanyInput> implements CompanyA
   public isAdmin!: boolean;
   public readonly createAt?: Date;
   public readonly updatedAt?: Date;
-  public ZipCodeId!: number;
 
   static associate(models: any) {
     /* asignaciones de la compañia para el admin */
@@ -43,7 +41,6 @@ class Company extends Model<CompanyAttributes, CompanyInput> implements CompanyA
     /* asignaciones de la compañia para el usuario-Compania */
     Company.belongsToMany(models.User, { through: models.CompanyUser });
     Company.belongsToMany(models.TradeCompanyUser, { through: models.TradeCompanyProfile });
-    Company.belongsTo(models.ZipCode);
     Company.belongsTo(models.Token);
   }
 }
@@ -90,10 +87,6 @@ module.exports = (sequelize: Sequelize) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
-      },
-      ZipCodeId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
       },
       stateCity: {
         type: DataTypes.STRING,

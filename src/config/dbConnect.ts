@@ -7,7 +7,7 @@ const db: any = {};
 
 dotenv.config();
 
-/* const dbName = process.env.DB_NAME as string;
+const dbName = process.env.DB_NAME as string;
 const dbHost = process.env.DB_HOST;
 const dbUsername = process.env.DB_USERNAME as string;
 const dbPassword = process.env.DB_PASSWORD;
@@ -18,14 +18,14 @@ const sequelize = new Sequelize.Sequelize(dbName, dbUsername, dbPassword, {
   dialect: dialect,
   logging: false,
   native: false,
-}); */
+});
 
-const dbUrl = process.env.DB_URL;
+/* const dbUrl = process.env.DB_URL;
 
 const sequelize = new Sequelize.Sequelize(`${dbUrl}`, {
   logging: false,
   native: false,
-}); 
+});  */
 
 const modelsDir = path.join(__dirname, '../db/models');
 fs.readdirSync(modelsDir)

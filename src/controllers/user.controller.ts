@@ -118,17 +118,15 @@ export const filterCompaniesForUsers = async (
       whereClause.zipcode = zipcode;
     }
 
-    let includeClauses: any[] = [
-      {
-        model: db.ZipCode,
-        where: { code: zipcode },
-      },
-    ];
+    const findZipCode = await db.ZipCode.findOne({
+      where: { code: zipcode },
+    });
+
+    let includeClauses: any[] = [];
 
     if (Number(tradeId) !== 0 && Number(tradeId) > 0) {
       includeClauses.push({
         model: db.TradeCompanyUser,
-        required: true,
         where: {
           id: tradeId,
         },
@@ -136,7 +134,6 @@ export const filterCompaniesForUsers = async (
     } else {
       includeClauses.push({
         model: db.TradeCompanyUser,
-        required: true,
       });
     }
 
@@ -147,23 +144,28 @@ export const filterCompaniesForUsers = async (
           id: classId,
         },
       };
-      includeClauses[1] = {
-        ...includeClauses[1],
+      includeClauses[0] = {
+        ...includeClauses[0],
         include: classIdFilter,
       };
     } else {
       const classIdFilter = {
         model: db.Class,
       };
-      includeClauses[1] = {
-        ...includeClauses[1],
+      includeClauses[0] = {
+        ...includeClauses[0],
         include: classIdFilter,
       };
     }
 
+    console.log(includeClauses)
+
     const companies = await db.Company.findAll({
+      where: { stateCity: findZipCode.state },
       include: includeClauses,
     });
+    console.log(companies);
+
     const trades: { id: number; name: string }[] = [];
     const classes: { id: number; name: string }[] = [];
 
@@ -189,12 +191,15 @@ export const filterCompaniesForUsers = async (
     });
 
     const companiesId = companies.map((company: any) => company.id);
+    companiesId.sort(() => Math.random() - 0.5);
+
+    const randomCompanyIds = companiesId.slice(0, 3);
 
     return res.status(200).json({
       message: "ok",
       trades,
       classes,
-      companiesId,
+      randomCompanyIds,
     });
   } catch (error) {
     console.error(error);

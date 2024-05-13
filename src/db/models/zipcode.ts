@@ -26,7 +26,6 @@ class ZipCode
   public readonly updatedAt?: Date;
 
   static associate(models: any) {
-    ZipCode.hasMany(models.Company);
     ZipCode.hasMany(models.User);
   }
 }

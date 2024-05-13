@@ -23,9 +23,6 @@ export const getAllCompany = async (
           model: db.Token,
         },
         {
-          model: db.ZipCode,
-        },
-        {
           model: db.Trade,
           include: db.Class
         },
@@ -62,7 +59,6 @@ export const createCompany = async (
     phone,
     email,
     password,
-    ZipCodeId,
     stateCity
   }: CompanyInput = req.body;
 
@@ -89,12 +85,10 @@ export const createCompany = async (
       phone,
       email,
       password: hashedPassword,
-      ZipCodeId,
       customerstripeId: customerId.id,
       stateCity 
     });
 
-    console.log("Company created successfully:", createdCompany.get({ plain: true }));
     return res.status(201).json({
       message: "Company created successfully",
       status: 201,
