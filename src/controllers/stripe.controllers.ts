@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import stripe from "../stripe/stripeConfig";
 
 
+
 // Funciones relacionadas con Stripe Payments
 
 export const stripeId = async (req: Request, res: Response) => {
@@ -377,4 +378,37 @@ export const deletePaymentMethod = async (req: Request, res: Response): Promise<
 
 
 
+export const getCustomerCardId = async (req: Request, res: Response) => {
+  try {
+    const { customerId } = req.params;
+    if (!customerId) {
+      throw new Error("Customer ID is required");
+    }
 
+    console.log("Fetching card for customer:", customerId);
+
+    // Obtener el PaymentMethod asociado al cliente
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customerId,
+      type: "card",
+    });
+
+    // Verificar si hay PaymentMethods asociados al cliente
+    if (paymentMethods.data.length > 0) {
+      // Tomar el primer PaymentMethod, asumiendo que es la tarjeta principal
+      const cardDetails = {
+        last4: paymentMethods.data[0].card?.last4, // Últimos 4 dígitos de la tarjeta
+        brand: paymentMethods.data[0].card?.brand, // Marca de la tarjeta (Visa, Mastercard, etc.)
+      };
+
+      console.log("Card details:", cardDetails);
+      res.send(cardDetails);
+    } else {
+      console.log("No card found for customer:", customerId);
+      res.status(404).send({ error: "No card found for customer" });
+    }
+  } catch (error) {
+    console.error("Error fetching customer card:", error);
+    res.status(500).send({ error: "Error fetching customer card" });
+  }
+};
