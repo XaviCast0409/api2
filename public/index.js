@@ -20,7 +20,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(routes_1.default);
 // Obtiene el puerto de la variable de entorno, si no está definido, utiliza el puerto 3000
 const port = process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 3000;
-dbConnect_1.default.sequelize.sync({ force: true }).then(() => {
+dbConnect_1.default.sequelize.sync({ alert: true }).then(() => {
     app.listen(port, "0.0.0.0", () => {
         console.log(`${process.env.APP_NAME} on port ${port}`);
     });
