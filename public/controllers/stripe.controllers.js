@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePaymentMethod = exports.getPaymentMethodId = exports.getAllCustomers = exports.createCardToken = exports.webhook = exports.handlePaymentFailure = exports.createPaymentIntent = exports.secretClient = exports.createSetupIntent = exports.addCardDetails = exports.associateCardWithPayment = exports.createCustomer = exports.createCheckoutSession = exports.stripeById = exports.stripeId = void 0;
+exports.getCustomerCardId = exports.deletePaymentMethod = exports.getPaymentMethodId = exports.getAllCustomers = exports.createCardToken = exports.webhook = exports.handlePaymentFailure = exports.createPaymentIntent = exports.secretClient = exports.createSetupIntent = exports.addCardDetails = exports.associateCardWithPayment = exports.createCustomer = exports.createCheckoutSession = exports.stripeById = exports.stripeId = void 0;
 //import db from "../config/dbConnect";
 const axios_1 = __importDefault(require("axios"));
 const stripeConfig_1 = __importDefault(require("../stripe/stripeConfig"));
@@ -349,3 +349,37 @@ const deletePaymentMethod = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.deletePaymentMethod = deletePaymentMethod;
+const getCustomerCardId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b, _c;
+    try {
+        const { customerId } = req.params;
+        if (!customerId) {
+            throw new Error("Customer ID is required");
+        }
+        console.log("Fetching card for customer:", customerId);
+        // Obtener el PaymentMethod asociado al cliente
+        const paymentMethods = yield stripeConfig_1.default.paymentMethods.list({
+            customer: customerId,
+            type: "card",
+        });
+        // Verificar si hay PaymentMethods asociados al cliente
+        if (paymentMethods.data.length > 0) {
+            // Tomar el primer PaymentMethod, asumiendo que es la tarjeta principal
+            const cardDetails = {
+                last4: (_b = paymentMethods.data[0].card) === null || _b === void 0 ? void 0 : _b.last4, // Últimos 4 dígitos de la tarjeta
+                brand: (_c = paymentMethods.data[0].card) === null || _c === void 0 ? void 0 : _c.brand, // Marca de la tarjeta (Visa, Mastercard, etc.)
+            };
+            console.log("Card details:", cardDetails);
+            res.send(cardDetails);
+        }
+        else {
+            console.log("No card found for customer:", customerId);
+            res.status(404).send({ error: "No card found for customer" });
+        }
+    }
+    catch (error) {
+        console.error("Error fetching customer card:", error);
+        res.status(500).send({ error: "Error fetching customer card" });
+    }
+});
+exports.getCustomerCardId = getCustomerCardId;
