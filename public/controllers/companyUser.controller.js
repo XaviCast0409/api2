@@ -22,20 +22,10 @@ const createCompanyUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
             UserId, CompanyId
         });
         // pago de los 5 dolares
-        const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
-            amount: 5000,
-            currency: "usd",
-            customer: UserId.toString(), //custumerId
-            confirm: true,
-            metadata: {
-                CompanyId: CompanyId.toString()
-            }
-        });
         return res.status(201).json({
             message: 'CompanyUser created successfully',
             status: 201,
             CompanyUser: createCompanyUser,
-            paymentIntent
         });
     }
     catch (error) {
@@ -50,14 +40,41 @@ exports.createCompanyUser = createCompanyUser;
 const createCompanyUserFunction = (UserId, CompanyId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log('Creating company user:', UserId, CompanyId);
+        const findCompany = yield dbConnect_1.default.Company.findOne({
+            where: { id: CompanyId }
+        });
+        // Obtener los métodos de pago de tipo tarjeta asociados a la compañía
+        const paymentMethods = yield stripeConfig_1.default.paymentMethods.list({
+            customer: findCompany.customerstripeId,
+            type: "card",
+        });
+        if (!paymentMethods.data.length) {
+            throw new Error("No card found for the company");
+        }
+        // Utiliza el primer método de pago de tarjeta encontrado
+        const paymentMethodId = paymentMethods.data[0].id;
+        // Crea el PaymentIntent con el método de pago de tarjeta
+        const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
+            amount: 500,
+            currency: "usd",
+            customer: findCompany.customerstripeId,
+            payment_method: paymentMethodId, // Usa el ID del método de pago de tarjeta
+            confirm: true,
+            metadata: {
+                CompanyId: CompanyId.toString()
+            },
+            return_url: "http://localhost:5173/matchingform"
+        });
+        console.log('PaymentIntent created:', paymentIntent);
         const createCompanyUser = yield dbConnect_1.default.CompanyUser.create({
-            UserId: UserId, CompanyId: CompanyId
+            UserId: UserId,
+            CompanyId: CompanyId
         });
         console.log('CompanyUser created successfully', createCompanyUser);
     }
     catch (error) {
-        console.error('Error creating company user:', error);
-        throw error;
+        console.error(error);
+        // Manejo de errores
     }
 });
 exports.createCompanyUserFunction = createCompanyUserFunction;
