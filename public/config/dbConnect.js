@@ -9,8 +9,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const db = {};
 dotenv_1.default.config();
-/*
-const dbName = process.env.DB_NAME as string;
+/* const dbName = process.env.DB_NAME as string;
 const dbHost = process.env.DB_HOST;
 const dbUsername = process.env.DB_USERNAME as string;
 const dbPassword = process.env.DB_PASSWORD;

@@ -103,16 +103,13 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (zipcode) {
             whereClause.zipcode = zipcode;
         }
-        let includeClauses = [
-            {
-                model: dbConnect_1.default.ZipCode,
-                where: { code: zipcode },
-            },
-        ];
+        const findZipCode = yield dbConnect_1.default.ZipCode.findOne({
+            where: { code: zipcode },
+        });
+        let includeClauses = [];
         if (Number(tradeId) !== 0 && Number(tradeId) > 0) {
             includeClauses.push({
                 model: dbConnect_1.default.TradeCompanyUser,
-                required: true,
                 where: {
                     id: tradeId,
                 },
@@ -121,7 +118,6 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
         else {
             includeClauses.push({
                 model: dbConnect_1.default.TradeCompanyUser,
-                required: true,
             });
         }
         if (Number(classId) && Number(classId) > 0) {
@@ -131,17 +127,20 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
                     id: classId,
                 },
             };
-            includeClauses[1] = Object.assign(Object.assign({}, includeClauses[1]), { include: classIdFilter });
+            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
         }
         else {
             const classIdFilter = {
                 model: dbConnect_1.default.Class,
             };
-            includeClauses[1] = Object.assign(Object.assign({}, includeClauses[1]), { include: classIdFilter });
+            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
         }
+        console.log(includeClauses);
         const companies = yield dbConnect_1.default.Company.findAll({
+            where: { stateCity: findZipCode.state },
             include: includeClauses,
         });
+        console.log(companies);
         const trades = [];
         const classes = [];
         companies === null || companies === void 0 ? void 0 : companies.forEach((company) => {
@@ -162,11 +161,13 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
             });
         });
         const companiesId = companies.map((company) => company.id);
+        companiesId.sort(() => Math.random() - 0.5);
+        const randomCompanyIds = companiesId.slice(0, 3);
         return res.status(200).json({
             message: "ok",
             trades,
             classes,
-            companiesId,
+            randomCompanyIds,
         });
     }
     catch (error) {

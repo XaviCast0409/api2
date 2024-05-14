@@ -91,34 +91,34 @@ const createCustomer = (email) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createCustomer = createCustomer;
 const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { customerId, cardToken } = req.body;
+        const { customerId, paymentMethodId } = req.body;
         console.log("Received request to associate card with payment");
         console.log("customerId:", customerId);
-        console.log("cardToken:", cardToken);
-        if (!customerId || !cardToken) {
-            throw new Error("Customer ID and card token are required in the request body");
+        console.log("paymentMethodId:", paymentMethodId);
+        if (!customerId) {
+            throw new Error("customerId is required");
         }
-        // Asociar la tarjeta con el cliente en Stripe
-        const card = yield stripeConfig_1.default.customers.createSource(customerId, {
-            source: cardToken,
-        });
-        console.log("Created card with ID:", card.id);
+        yield stripeConfig_1.default.paymentMethods.detach(paymentMethodId);
+        // Asociar la tarjeta de pago con el cliente
+        if (!customerId) {
+            throw new Error("customerId is required");
+        }
         // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
         const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
-            amount: 100, // Monto en centavos (en este caso, 1 dólar)
+            amount: 100,
             currency: "usd",
             customer: customerId,
-            payment_method: card.id,
-            off_session: true, // El pago no se realiza en una sesión activa
-            confirm: true, // Confirmar automáticamente el pago
+            payment_method_types: ["card"],
+            payment_method: paymentMethodId,
+            off_session: true,
+            confirm: true,
         });
         console.log("Created payment intent with ID:", paymentIntent.id);
-        // Enviar la respuesta con los detalles de la tarjeta asociada y el intento de pago
-        res.json({ card, paymentIntent });
+        res.json({ paymentIntent });
     }
     catch (error) {
-        console.error("Error associating card with customer and charging one dollar:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error associating card with payment:", error);
+        res.status(500).send({ error: error.message });
     }
 });
 exports.associateCardWithPayment = associateCardWithPayment;
@@ -192,25 +192,21 @@ const createPaymentIntent = (req, res) => __awaiter(void 0, void 0, void 0, func
     try {
         console.log("Creating PaymentIntent...");
         const { customerId, paymentMethodId } = req.body;
-        const pricePerTrade = 5;
-        const numberOfTradesPerWeek = 5;
-        const totalAmountPerWeek = pricePerTrade * numberOfTradesPerWeek * 100; // Convert to cents
+        // const pricePerTrade = 1;
+        // const numberOfTradesPerWeek = 5;
         console.log("Request body:", req.body);
-        console.log("Total amount per week:", totalAmountPerWeek);
+        // console.log("Total amount per week:", totalAmountPerWeek);
         console.log("customerId:", customerId);
         console.log("paymentMethodId:", paymentMethodId);
         // Create a PaymentIntent with the provided parameters
         const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
-            amount: totalAmountPerWeek,
+            amount: 100,
             currency: "usd",
             payment_method_types: ["card"],
             customer: customerId,
             payment_method: paymentMethodId,
             off_session: true,
             confirm: true,
-            metadata: {
-                numberOfTradesPerWeek: numberOfTradesPerWeek,
-            },
         });
         console.log("Created PaymentIntent:", paymentIntent);
         res.send({ paymentIntent });

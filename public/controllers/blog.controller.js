@@ -38,7 +38,7 @@ exports.getAllBlogs = getAllBlogs;
 // Get a single blog by ID
 const getBlogById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const blog = yield dbConnect_1.default.Blog.findByPk(req.params.id);
+        const blog = yield dbConnect_1.default.Blog.findOne({ where: { id: req.params.id } });
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
@@ -96,13 +96,15 @@ exports.updateBlog = updateBlog;
 // Delete a blog by ID
 const deleteBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const blog = yield dbConnect_1.default.Blog.destroy({ where: { id: req.params.id } });
+        const { id } = req.params;
+        const blog = yield dbConnect_1.default.Blog.destroy({ where: { id: id } });
         if (!blog) {
-            return res.status(404).json({ message: "Blog not found" });
+            return res.status(404).json({ message: `Blog with ID '${id}' not found` });
         }
         res.status(200).json({ message: "Blog deleted successfully" });
     }
     catch (error) {
+        console.error("Error deleting blog:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });

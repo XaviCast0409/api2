@@ -23,15 +23,12 @@ const getAllCompany = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const pageSize = parseInt(size, 10);
     const offset = (pageNumber - 1) * pageSize;
     try {
-        const { count, rows } = yield dbConnect_1.default.Companies.findAndCountAll({
+        const { count, rows } = yield dbConnect_1.default.Company.findAndCountAll({
             offset,
             limit: pageSize,
             include: [
                 {
                     model: dbConnect_1.default.Token,
-                },
-                {
-                    model: dbConnect_1.default.ZipCode,
                 },
                 {
                     model: dbConnect_1.default.Trade,
@@ -60,7 +57,7 @@ const getAllCompany = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.getAllCompany = getAllCompany;
 const createCompany = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name_company, address, phone, email, password, ZipCodeId, customerstripeId } = req.body;
+    const { name_company, address, phone, email, password, stateCity } = req.body;
     try {
         const existingCompany = yield dbConnect_1.default.Company.findOne({
             where: { email },
@@ -74,17 +71,16 @@ const createCompany = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         const hashedPassword = yield (0, hass_1.encrypt)(password);
+        const customerId = yield (0, stripe_controllers_1.createCustomer)(email);
         const createdCompany = yield dbConnect_1.default.Company.create({
             name_company,
             address,
             phone,
             email,
             password: hashedPassword,
-            ZipCodeId,
-            customerstripeId,
+            customerstripeId: customerId.id,
+            stateCity
         });
-        yield (0, stripe_controllers_1.createCustomer)(email);
-        console.log("Company created successfully:", createdCompany.get({ plain: true }));
         return res.status(201).json({
             message: "Company created successfully",
             status: 201,

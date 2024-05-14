@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 class ZipCode extends sequelize_1.Model {
     static associate(models) {
-        ZipCode.hasMany(models.Company);
         ZipCode.hasMany(models.User);
     }
 }

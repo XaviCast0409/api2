@@ -8,7 +8,6 @@ class Company extends sequelize_1.Model {
         /* asignaciones de la compañia para el usuario-Compania */
         Company.belongsToMany(models.User, { through: models.CompanyUser });
         Company.belongsToMany(models.TradeCompanyUser, { through: models.TradeCompanyProfile });
-        Company.belongsTo(models.ZipCode);
         Company.belongsTo(models.Token);
     }
 }
@@ -54,8 +53,8 @@ module.exports = (sequelize) => {
             allowNull: false,
             defaultValue: false
         },
-        ZipCodeId: {
-            type: sequelize_1.DataTypes.INTEGER,
+        stateCity: {
+            type: sequelize_1.DataTypes.STRING,
             allowNull: true,
         },
     }, {

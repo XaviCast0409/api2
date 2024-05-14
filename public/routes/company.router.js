@@ -16,9 +16,9 @@ companyRouter.patch("/change-status", company_controller_1.changeStatusCompany);
 /* rutas blogs company */
 companyRouter.get("/company-all-blogs", blog_controller_1.getAllBlogs);
 companyRouter.post("/company-blog-create", blog_controller_1.createBlog);
-companyRouter.post("/company-blog-byId", blog_controller_1.getBlogById);
+companyRouter.get("/company-blog-byId/:id", blog_controller_1.getBlogById);
 companyRouter.post("/company-blog-update", blog_controller_1.updateBlog);
-companyRouter.post("/company-blog-delete", blog_controller_1.deleteBlog);
+companyRouter.delete("/company-blog-delete/:id", blog_controller_1.deleteBlog);
 /* company profile */
 companyRouter.post("/create-trade-companyProfile", CompanyProfile_controller_1.createRelationCompanyProfileTrade);
 companyRouter.post("/create-trade-class-company-profile", CompanyProfile_controller_1.createTradeClassCompanyUser);
