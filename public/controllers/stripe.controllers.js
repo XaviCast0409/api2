@@ -98,7 +98,9 @@ const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0,
         if (!customerId) {
             throw new Error("customerId is required");
         }
-        yield stripeConfig_1.default.paymentMethods.detach(paymentMethodId);
+        yield stripeConfig_1.default.paymentMethods.attach(paymentMethodId, {
+            customer: customerId,
+        });
         // Asociar la tarjeta de pago con el cliente
         if (!customerId) {
             throw new Error("customerId is required");
