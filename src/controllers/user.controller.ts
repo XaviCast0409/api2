@@ -110,7 +110,7 @@ export const filterCompaniesForUsers = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { zipcode, tradeId, /* classId */ } = req.query;
+    const { zipcode, tradeId, classId } = req.query;
     let whereClause: any = {};
 
     if (zipcode) {
@@ -136,7 +136,7 @@ export const filterCompaniesForUsers = async (
         model: db.TradeCompanyUser,
       });
     }
-/* 
+
     if (Number(classId) && Number(classId) > 0) {
       const classIdFilter = {
         model: db.Class,
@@ -156,7 +156,7 @@ export const filterCompaniesForUsers = async (
         ...includeClauses[0],
         include: classIdFilter,
       };
-    } */
+    }
 
     const companies = await db.Company.findAll({
       where: { stateCity: findZipCode.state },

@@ -97,7 +97,7 @@ const userById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.userById = userById;
 const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { zipcode, tradeId, /* classId */ } = req.query;
+        const { zipcode, tradeId, classId } = req.query;
         let whereClause = {};
         if (zipcode) {
             whereClause.zipcode = zipcode;
@@ -120,27 +120,21 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
                 model: dbConnect_1.default.TradeCompanyUser,
             });
         }
-        /*
-            if (Number(classId) && Number(classId) > 0) {
-              const classIdFilter = {
-                model: db.Class,
+        if (Number(classId) && Number(classId) > 0) {
+            const classIdFilter = {
+                model: dbConnect_1.default.Class,
                 where: {
-                  id: classId,
+                    id: classId,
                 },
-              };
-              includeClauses[0] = {
-                ...includeClauses[0],
-                include: classIdFilter,
-              };
-            } else {
-              const classIdFilter = {
-                model: db.Class,
-              };
-              includeClauses[0] = {
-                ...includeClauses[0],
-                include: classIdFilter,
-              };
-            } */
+            };
+            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
+        }
+        else {
+            const classIdFilter = {
+                model: dbConnect_1.default.Class,
+            };
+            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
+        }
         const companies = yield dbConnect_1.default.Company.findAll({
             where: { stateCity: findZipCode.state },
             include: includeClauses,
