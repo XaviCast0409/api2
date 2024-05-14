@@ -110,8 +110,7 @@ export const filterCompaniesForUsers = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { zipcode, tradeId, classId } = req.query;
-    console.log(zipcode, tradeId, classId);
+    const { zipcode, tradeId, /* classId */ } = req.query;
     let whereClause: any = {};
 
     if (zipcode) {
@@ -121,6 +120,7 @@ export const filterCompaniesForUsers = async (
     const findZipCode = await db.ZipCode.findOne({
       where: { code: zipcode },
     });
+    console.log(findZipCode.state)
 
     let includeClauses: any[] = [];
 
@@ -136,7 +136,7 @@ export const filterCompaniesForUsers = async (
         model: db.TradeCompanyUser,
       });
     }
-
+/* 
     if (Number(classId) && Number(classId) > 0) {
       const classIdFilter = {
         model: db.Class,
@@ -156,19 +156,17 @@ export const filterCompaniesForUsers = async (
         ...includeClauses[0],
         include: classIdFilter,
       };
-    }
-
-    console.log(includeClauses)
+    } */
 
     const companies = await db.Company.findAll({
       where: { stateCity: findZipCode.state },
       include: includeClauses,
     });
-    console.log(companies);
 
+    
     const trades: { id: number; name: string }[] = [];
     const classes: { id: number; name: string }[] = [];
-
+    
     companies?.forEach((company: any) => {
       company?.TradeCompanyUsers?.forEach((trade: any) => {
         const { id, name, Classes } = trade;
@@ -189,6 +187,7 @@ export const filterCompaniesForUsers = async (
         });
       });
     });
+    console.log(trades)
 
     const companiesId = companies.map((company: any) => company.id);
     companiesId.sort(() => Math.random() - 0.5);
@@ -200,6 +199,7 @@ export const filterCompaniesForUsers = async (
       trades,
       classes,
       randomCompanyIds,
+      companies
     });
   } catch (error) {
     console.error(error);

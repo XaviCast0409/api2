@@ -97,8 +97,7 @@ const userById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.userById = userById;
 const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { zipcode, tradeId, classId } = req.query;
-        console.log(zipcode, tradeId, classId);
+        const { zipcode, tradeId, /* classId */ } = req.query;
         let whereClause = {};
         if (zipcode) {
             whereClause.zipcode = zipcode;
@@ -106,6 +105,7 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
         const findZipCode = yield dbConnect_1.default.ZipCode.findOne({
             where: { code: zipcode },
         });
+        console.log(findZipCode.state);
         let includeClauses = [];
         if (Number(tradeId) !== 0 && Number(tradeId) > 0) {
             includeClauses.push({
@@ -120,27 +120,31 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
                 model: dbConnect_1.default.TradeCompanyUser,
             });
         }
-        if (Number(classId) && Number(classId) > 0) {
-            const classIdFilter = {
-                model: dbConnect_1.default.Class,
+        /*
+            if (Number(classId) && Number(classId) > 0) {
+              const classIdFilter = {
+                model: db.Class,
                 where: {
-                    id: classId,
+                  id: classId,
                 },
-            };
-            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
-        }
-        else {
-            const classIdFilter = {
-                model: dbConnect_1.default.Class,
-            };
-            includeClauses[0] = Object.assign(Object.assign({}, includeClauses[0]), { include: classIdFilter });
-        }
-        console.log(includeClauses);
+              };
+              includeClauses[0] = {
+                ...includeClauses[0],
+                include: classIdFilter,
+              };
+            } else {
+              const classIdFilter = {
+                model: db.Class,
+              };
+              includeClauses[0] = {
+                ...includeClauses[0],
+                include: classIdFilter,
+              };
+            } */
         const companies = yield dbConnect_1.default.Company.findAll({
             where: { stateCity: findZipCode.state },
             include: includeClauses,
         });
-        console.log(companies);
         const trades = [];
         const classes = [];
         companies === null || companies === void 0 ? void 0 : companies.forEach((company) => {
@@ -160,6 +164,7 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
                 });
             });
         });
+        console.log(trades);
         const companiesId = companies.map((company) => company.id);
         companiesId.sort(() => Math.random() - 0.5);
         const randomCompanyIds = companiesId.slice(0, 3);
@@ -168,6 +173,7 @@ const filterCompaniesForUsers = (req, res) => __awaiter(void 0, void 0, void 0, 
             trades,
             classes,
             randomCompanyIds,
+            companies
         });
     }
     catch (error) {
