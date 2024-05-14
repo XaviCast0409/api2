@@ -22,15 +22,6 @@ export const createRelationCompanyProfileTrade = async (req: Request, res: Respo
         status: 400,
       });
     }
-    const findTradeProfile = await db.TradeCompanyUser.findOne({
-      where: { name },
-    });
-    if (findTradeProfile) {
-      return res.status(400).json({
-        message: "Trade Profile already exists",
-        status: 400,
-      });
-    }
     const createTradeProfile = await createTradeCompanyUser(name);
 
     const relationTradeProfile = await db.TradeCompanyProfile.create({

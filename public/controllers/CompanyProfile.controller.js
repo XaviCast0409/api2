@@ -35,15 +35,6 @@ const createRelationCompanyProfileTrade = (req, res) => __awaiter(void 0, void 0
                 status: 400,
             });
         }
-        const findTradeProfile = yield dbConnect_1.default.TradeCompanyUser.findOne({
-            where: { name },
-        });
-        if (findTradeProfile) {
-            return res.status(400).json({
-                message: "Trade Profile already exists",
-                status: 400,
-            });
-        }
         const createTradeProfile = yield (0, exports.createTradeCompanyUser)(name);
         const relationTradeProfile = yield dbConnect_1.default.TradeCompanyProfile.create({
             TradeCompanyUserId: createTradeProfile.id,
