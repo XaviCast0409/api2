@@ -61,9 +61,10 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             address,
             ZipCodeId: zipCodeId,
         });
-        console.log(newUser);
-        if (CompanyId && CompanyId.length > 0) {
+        console.log(CompanyId);
+        if (CompanyId) {
             for (let i = 0; i < CompanyId.length; i++) {
+                // Asegúrate de que createCompanyUserFunction sea una función asincrónica
                 yield (0, companyUser_controller_1.createCompanyUserFunction)(newUser.id, CompanyId[i]);
             }
         }
@@ -74,6 +75,8 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (error) {
+        // Aquí podrías añadir más detalles sobre el error para facilitar el diagnóstico
+        console.error("Error creating user:", error);
         return res.status(400).send(error);
     }
 });

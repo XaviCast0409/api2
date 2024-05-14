@@ -49,6 +49,7 @@ const createCompanyUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.createCompanyUser = createCompanyUser;
 const createCompanyUserFunction = (UserId, CompanyId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log('Creating company user:', UserId, CompanyId);
         const createCompanyUser = yield dbConnect_1.default.CompanyUser.create({
             UserId: UserId, CompanyId: CompanyId
         });

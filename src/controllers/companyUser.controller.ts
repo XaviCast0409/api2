@@ -39,6 +39,8 @@ export const createCompanyUser = async (req: Request, res: Response): Promise<Re
 
 export const createCompanyUserFunction = async (UserId: number, CompanyId: number): Promise<void> => {
   try {   
+    console.log('Creating company user:', UserId, CompanyId);
+    
     const createCompanyUser = await db.CompanyUser.create({
       UserId: UserId, CompanyId: CompanyId
     });

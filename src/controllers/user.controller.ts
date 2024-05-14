@@ -51,6 +51,7 @@ export const createUser = async (
     const findUser = await db.User.findOne({
       where: { email },
     });
+
     if (findUser) {
       return res.status(400).send({
         message: "User already exists",
@@ -66,12 +67,11 @@ export const createUser = async (
       address,
       ZipCodeId: zipCodeId,
     });
+    console.log(CompanyId)
 
-    console.log(newUser);
-    
-
-    if (CompanyId && CompanyId.length > 0) {
+    if (CompanyId) {
       for (let i = 0; i < CompanyId.length; i++) {
+        // Asegúrate de que createCompanyUserFunction sea una función asincrónica
         await createCompanyUserFunction(newUser.id, CompanyId[i]);
       }
     }
@@ -82,9 +82,12 @@ export const createUser = async (
       user: newUser,
     });
   } catch (error) {
+    // Aquí podrías añadir más detalles sobre el error para facilitar el diagnóstico
+    console.error("Error creating user:", error);
     return res.status(400).send(error);
   }
 };
+
 
 export const userById = async (
   req: Request,
