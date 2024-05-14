@@ -100,7 +100,9 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
       throw new Error("customerId is required");
     }
 
-    await stripe.paymentMethods.detach(paymentMethodId);
+    await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: customerId,
+    });
 
     // Asociar la tarjeta de pago con el cliente
     if (!customerId) {
