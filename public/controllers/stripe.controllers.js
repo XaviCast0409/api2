@@ -105,7 +105,7 @@ const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0,
         catch (retrieveError) {
             if (retrieveError.statusCode === 404) {
                 // Si el cliente no existe, crearlo
-                yield stripeConfig_1.default.customers.create({ email: customerId }); // Replace '' with the actual email value
+                // await stripe.customers.create({ email: customerId });  Replace '' with the actual email value
             }
             else {
                 throw retrieveError;
