@@ -107,7 +107,7 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
     } catch (retrieveError: any) {
       if (retrieveError.statusCode === 404) {
         // Si el cliente no existe, crearlo
-        await stripe.customers.create({}); // Remove the second argument { id: customerId }
+        await stripe.customers.create({ email: customerId }); // Replace '' with the actual email value
       } else {
         throw retrieveError;
       }
