@@ -7,6 +7,8 @@ dotenv.config();
 // Obtén el valor de la variable de entorno y proporciona un valor predeterminado si es `undefined`
 const apiSecretStripe = process.env.API_SECRET_STRIPE ?? '';
 
+console.log("apiSecretStripe", apiSecretStripe);
+
 // Crea una nueva instancia de Stripe utilizando la variable de entorno
 const stripe = new Stripe(apiSecretStripe);
 

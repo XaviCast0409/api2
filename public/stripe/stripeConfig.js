@@ -10,6 +10,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 // Obtén el valor de la variable de entorno y proporciona un valor predeterminado si es `undefined`
 const apiSecretStripe = (_a = process.env.API_SECRET_STRIPE) !== null && _a !== void 0 ? _a : '';
+console.log("apiSecretStripe", apiSecretStripe);
 // Crea una nueva instancia de Stripe utilizando la variable de entorno
 const stripe = new stripe_1.default(apiSecretStripe);
 exports.default = stripe;

@@ -6,3 +6,4 @@ const classRouter = (0, express_1.Router)();
 classRouter.get("/all-classes", class_controller_1.getAllClass);
 classRouter.post("/create-class", class_controller_1.classCreate);
 exports.default = classRouter;
+// Path: api2/src/routes/company.router.ts
