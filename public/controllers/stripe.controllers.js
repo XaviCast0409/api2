@@ -98,13 +98,23 @@ const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0,
         if (!customerId) {
             throw new Error("customerId is required");
         }
+        // Verificar si el cliente existe en Stripe
+        try {
+            yield stripeConfig_1.default.customers.retrieve(customerId);
+        }
+        catch (retrieveError) {
+            if (retrieveError.statusCode === 404) {
+                // Si el cliente no existe, crearlo
+                yield stripeConfig_1.default.customers.create({}); // Remove the second argument { id: customerId }
+            }
+            else {
+                throw retrieveError;
+            }
+        }
+        // Asociar la tarjeta de pago con el cliente
         yield stripeConfig_1.default.paymentMethods.attach(paymentMethodId, {
             customer: customerId,
         });
-        // Asociar la tarjeta de pago con el cliente
-        if (!customerId) {
-            throw new Error("customerId is required");
-        }
         // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
         const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
             amount: 100,

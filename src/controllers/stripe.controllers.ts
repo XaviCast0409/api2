@@ -101,14 +101,22 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
       throw new Error("customerId is required");
     }
 
+    // Verificar si el cliente existe en Stripe
+    try {
+      await stripe.customers.retrieve(customerId);
+    } catch (retrieveError: any) {
+      if (retrieveError.statusCode === 404) {
+        // Si el cliente no existe, crearlo
+        await stripe.customers.create({}); // Remove the second argument { id: customerId }
+      } else {
+        throw retrieveError;
+      }
+    }
+
+    // Asociar la tarjeta de pago con el cliente
     await stripe.paymentMethods.attach(paymentMethodId, {
       customer: customerId,
     });
-
-    // Asociar la tarjeta de pago con el cliente
-    if (!customerId) {
-      throw new Error("customerId is required");
-    }
 
     // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
     const paymentIntent = await stripe.paymentIntents.create({
@@ -117,8 +125,8 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
       customer: customerId,
       payment_method_types: ["card"],
       payment_method: paymentMethodId,
-      off_session: true, 
-      confirm: true, 
+      off_session: true,
+      confirm: true,
     });
     console.log("Created payment intent with ID:", paymentIntent.id);
     res.json({ paymentIntent });
