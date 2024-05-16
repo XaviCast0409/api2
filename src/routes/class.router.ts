@@ -7,3 +7,5 @@ classRouter.get("/all-classes", getAllClass);
 classRouter.post("/create-class", classCreate);
 
 export default classRouter;
+
+// Path: api2/src/routes/company.router.ts
