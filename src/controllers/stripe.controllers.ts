@@ -102,18 +102,14 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
       throw new Error("companyId is required");
     }
 
-    // Obtener información de la compañía por ID
-    const companyResponse = await fetch(`http://localhost:3000/company-by-id/${companyId}`);
-    const companyData = await companyResponse.json();
-    const { email } = companyData; // Suponiendo que obtienes el nombre y el correo electrónico de la compañía
+    const email = req.body.email; // Declare the 'email' variable
 
-    // Verificar si el cliente existe en Stripe
     const customers = await stripe.customers.list({ email });
     let customer;
     if (customers.data.length > 0) {
       customer = customers.data[0];
     } else {
-      // Si el cliente no existe, crearlo
+      // If the customer does not exist, create it
       customer = await stripe.customers.create({ email });
     }
 

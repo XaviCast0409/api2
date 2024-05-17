@@ -98,18 +98,14 @@ const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0,
         if (!companyId) {
             throw new Error("companyId is required");
         }
-        // Obtener información de la compañía por ID
-        const companyResponse = yield fetch(`http://localhost:3000/company-by-id/${companyId}`);
-        const companyData = yield companyResponse.json();
-        const { email } = companyData; // Suponiendo que obtienes el nombre y el correo electrónico de la compañía
-        // Verificar si el cliente existe en Stripe
+        const email = req.body.email; // Declare the 'email' variable
         const customers = yield stripeConfig_1.default.customers.list({ email });
         let customer;
         if (customers.data.length > 0) {
             customer = customers.data[0];
         }
         else {
-            // Si el cliente no existe, crearlo
+            // If the customer does not exist, create it
             customer = yield stripeConfig_1.default.customers.create({ email });
         }
         // Asociar la tarjeta de pago con el cliente
