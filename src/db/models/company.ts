@@ -7,7 +7,7 @@ interface CompanyAttributes {
   phone: string;
   email: string;
   password: string;
-  customerstripeId: string | undefined;
+  customerstripeId: string;
   status: boolean;
   isAdmin: boolean;
   createAt?: Date;
@@ -26,7 +26,7 @@ class Company extends Model<CompanyAttributes, CompanyInput> implements CompanyA
   public email!: string;
   public password!: string;
 
-  public customerstripeId!: string | undefined;
+  public customerstripeId!: string;
   public stateCity!: string;
 
   public status!: boolean;
@@ -76,7 +76,7 @@ module.exports = (sequelize: Sequelize) => {
       },
       customerstripeId: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false,
       },
       status: {
         type: DataTypes.BOOLEAN,
