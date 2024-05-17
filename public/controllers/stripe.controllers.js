@@ -91,27 +91,17 @@ const createCustomer = (email) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createCustomer = createCustomer;
 const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, paymentMethodId } = req.body;
+        const { paymentMethodId } = req.body;
         console.log("Received request to associate card with payment");
         console.log("paymentMethodId:", paymentMethodId);
-        if (!email) {
-            throw new Error("email is required");
-        }
         if (!paymentMethodId) {
             throw new Error("paymentMethodId is required");
         }
         // Verificar si el cliente existe en Stripe
         console.log("Verifying if customer exists in Stripe");
-        const customers = yield stripeConfig_1.default.customers.list({ email });
-        let customer;
-        if (customers.data.length > 0) {
-            customer = customers.data[0];
-        }
-        else {
-            // If the customer does not exist, create it
-            customer = yield stripeConfig_1.default.customers.create({ email });
-        }
+        // No hay referencia al campo de email aquí.
         // Asociar la tarjeta de pago con el cliente
+        const customer = yield stripeConfig_1.default.customers.create();
         yield stripeConfig_1.default.paymentMethods.attach(paymentMethodId, {
             customer: customer.id,
         });
