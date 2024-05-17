@@ -93,16 +93,26 @@ export const createCustomer = async (email: string) => {
 
 export const associateCardWithPayment = async (req: Request, res: Response) => {
   try {
-    const { companyId, paymentMethodId } = req.body;
+    const { companyId, email ,paymentMethodId } = req.body;
     console.log("Received request to associate card with payment");
-    console.log("companyId:", companyId);
+    console.log("companyId id:", companyId.id);
     console.log("paymentMethodId:", paymentMethodId);
 
-    if (!companyId) {
+    if (!companyId.id) {
       throw new Error("companyId is required");
     }
 
-    const email = req.body.email; // Declare the 'email' variable
+    if (!email) {
+      throw new Error("email is required");
+    }
+
+    if (!paymentMethodId) {
+      throw new Error("paymentMethodId is required");
+    }
+
+    // Verificar si el cliente existe en Stripe
+
+    console.log("Verifying if customer exists in Stripe");
 
     const customers = await stripe.customers.list({ email });
     let customer;
