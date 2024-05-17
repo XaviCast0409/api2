@@ -95,10 +95,10 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
   try {
     const { companyId, email ,paymentMethodId } = req.body;
     console.log("Received request to associate card with payment");
-    console.log("companyId id:", companyId.id);
+    console.log("companyId id:", companyId);
     console.log("paymentMethodId:", paymentMethodId);
 
-    if (!companyId.id) {
+    if (!companyId) {
       throw new Error("companyId is required");
     }
 
