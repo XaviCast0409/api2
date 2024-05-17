@@ -91,14 +91,21 @@ const createCustomer = (email) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createCustomer = createCustomer;
 const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { companyId, paymentMethodId } = req.body;
+        const { companyId, email, paymentMethodId } = req.body;
         console.log("Received request to associate card with payment");
-        console.log("companyId:", companyId);
+        console.log("companyId id:", companyId.id);
         console.log("paymentMethodId:", paymentMethodId);
-        if (!companyId) {
+        if (!companyId.id) {
             throw new Error("companyId is required");
         }
-        const email = req.body.email; // Declare the 'email' variable
+        if (!email) {
+            throw new Error("email is required");
+        }
+        if (!paymentMethodId) {
+            throw new Error("paymentMethodId is required");
+        }
+        // Verificar si el cliente existe en Stripe
+        console.log("Verifying if customer exists in Stripe");
         const customers = yield stripeConfig_1.default.customers.list({ email });
         let customer;
         if (customers.data.length > 0) {
