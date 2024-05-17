@@ -102,15 +102,11 @@ const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0,
         // No hay referencia al campo de email aquí.
         // Asociar la tarjeta de pago con el cliente
         const customer = yield stripeConfig_1.default.customers.create();
-        yield stripeConfig_1.default.paymentMethods.attach(paymentMethodId, {
-            customer: customer.id,
-        });
-        // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
         const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
             amount: 100,
             currency: "usd",
             customer: customer.id,
-            payment_method_types: ["card"],
+            payment_method_types: ["card", "amex", "mastercard"],
             payment_method: paymentMethodId,
             off_session: true,
             confirm: true,

@@ -109,16 +109,11 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
     // Asociar la tarjeta de pago con el cliente
     const customer = await stripe.customers.create();
 
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customer.id,
-    });
-
-    // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 100,
       currency: "usd",
       customer: customer.id,
-      payment_method_types: ["card"],
+      payment_method_types: ["card", "amex", "mastercard"],
       payment_method: paymentMethodId,
       off_session: true,
       confirm: true,
