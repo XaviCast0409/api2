@@ -16,7 +16,7 @@ stripeRouter
     .get("/secret-client", StripeController.secretClient)
     .get("/all-customers", StripeController.getAllCustomers)
     .get("/customer/:customerId/card", StripeController.getCustomerCardId)
-    .get("/payment-method-id", StripeController.getPaymentMethodId);
+    .get("/payment-method-id/:paymentMethodId", StripeController.getPaymentMethodId);
 
 // Configuración de pagos
 stripeRouter
