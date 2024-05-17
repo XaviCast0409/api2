@@ -90,39 +90,43 @@ export const createCustomer = async (email: string) => {
 
 
 
+
 export const associateCardWithPayment = async (req: Request, res: Response) => {
   try {
-    const { customerId, paymentMethodId } = req.body;
+    const { companyId, paymentMethodId } = req.body;
     console.log("Received request to associate card with payment");
-    console.log("customerId:", customerId);
+    console.log("companyId:", companyId);
     console.log("paymentMethodId:", paymentMethodId);
 
-    if (!customerId) {
-      throw new Error("customerId is required");
+    if (!companyId) {
+      throw new Error("companyId is required");
     }
 
+    // Obtener información de la compañía por ID
+    const companyResponse = await fetch(`http://localhost:3000/company-by-id/${companyId}`);
+    const companyData = await companyResponse.json();
+    const { email } = companyData; // Suponiendo que obtienes el nombre y el correo electrónico de la compañía
+
     // Verificar si el cliente existe en Stripe
-    try {
-      await stripe.customers.retrieve(customerId);
-    } catch (retrieveError: any) {
-      if (retrieveError.statusCode === 404) {
-        // Si el cliente no existe, crearlo
-       // await stripe.customers.create({ email: customerId });  Replace '' with the actual email value
-      } else {
-        throw retrieveError;
-      }
+    const customers = await stripe.customers.list({ email });
+    let customer;
+    if (customers.data.length > 0) {
+      customer = customers.data[0];
+    } else {
+      // Si el cliente no existe, crearlo
+      customer = await stripe.customers.create({ email });
     }
 
     // Asociar la tarjeta de pago con el cliente
     await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customerId,
+      customer: customer.id,
     });
 
     // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 100,
       currency: "usd",
-      customer: customerId,
+      customer: customer.id,
       payment_method_types: ["card"],
       payment_method: paymentMethodId,
       off_session: true,
@@ -135,6 +139,7 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
     res.status(500).send({ error: error.message });
   }
 };
+
 
 
 export const addCardDetails = async (req: Request, res: Response) => {

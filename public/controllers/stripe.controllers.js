@@ -91,35 +91,36 @@ const createCustomer = (email) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createCustomer = createCustomer;
 const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { customerId, paymentMethodId } = req.body;
+        const { companyId, paymentMethodId } = req.body;
         console.log("Received request to associate card with payment");
-        console.log("customerId:", customerId);
+        console.log("companyId:", companyId);
         console.log("paymentMethodId:", paymentMethodId);
-        if (!customerId) {
-            throw new Error("customerId is required");
+        if (!companyId) {
+            throw new Error("companyId is required");
         }
+        // Obtener información de la compañía por ID
+        const companyResponse = yield fetch(`http://localhost:3000/company-by-id/${companyId}`);
+        const companyData = yield companyResponse.json();
+        const { email } = companyData; // Suponiendo que obtienes el nombre y el correo electrónico de la compañía
         // Verificar si el cliente existe en Stripe
-        try {
-            yield stripeConfig_1.default.customers.retrieve(customerId);
+        const customers = yield stripeConfig_1.default.customers.list({ email });
+        let customer;
+        if (customers.data.length > 0) {
+            customer = customers.data[0];
         }
-        catch (retrieveError) {
-            if (retrieveError.statusCode === 404) {
-                // Si el cliente no existe, crearlo
-                // await stripe.customers.create({ email: customerId });  Replace '' with the actual email value
-            }
-            else {
-                throw retrieveError;
-            }
+        else {
+            // Si el cliente no existe, crearlo
+            customer = yield stripeConfig_1.default.customers.create({ email });
         }
         // Asociar la tarjeta de pago con el cliente
         yield stripeConfig_1.default.paymentMethods.attach(paymentMethodId, {
-            customer: customerId,
+            customer: customer.id,
         });
         // Realizar un cargo de un dólar al cliente usando la tarjeta recién asociada
         const paymentIntent = yield stripeConfig_1.default.paymentIntents.create({
             amount: 100,
             currency: "usd",
-            customer: customerId,
+            customer: customer.id,
             payment_method_types: ["card"],
             payment_method: paymentMethodId,
             off_session: true,
