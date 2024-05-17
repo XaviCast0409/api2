@@ -113,7 +113,7 @@ export const associateCardWithPayment = async (req: Request, res: Response) => {
       amount: 100,
       currency: "usd",
       customer: customer.id,
-      payment_method_types: ["card", "amex", "mastercard"],
+      payment_method_types: ["card"],
       payment_method: paymentMethodId,
       off_session: true,
       confirm: true,
