@@ -91,13 +91,9 @@ const createCustomer = (email) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createCustomer = createCustomer;
 const associateCardWithPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { companyId, email, paymentMethodId } = req.body;
+        const { email, paymentMethodId } = req.body;
         console.log("Received request to associate card with payment");
-        console.log("companyId id:", companyId.id);
         console.log("paymentMethodId:", paymentMethodId);
-        if (!companyId.id) {
-            throw new Error("companyId is required");
-        }
         if (!email) {
             throw new Error("email is required");
         }
