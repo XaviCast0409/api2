@@ -1,0 +1,9 @@
+https://api2-2aj3.onrender.com/
+
+
+### Obteniendo all customers
+GET https://api2-2aj3.onrender.com/all-customers
+
+### Obteniendo Checkout Session
+GET https://api2-2aj3.onrender.com/create-checkout-session
+
