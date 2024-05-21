@@ -7,3 +7,7 @@ GET https://api2-2aj3.onrender.com/all-customers
 ### Obteniendo Checkout Session
 GET https://api2-2aj3.onrender.com/create-checkout-session
 
+
+### Obteniendo Checkout Session ID
+GET https://api2-2aj3.onrender.com/get-checkout-session/:id 
+
